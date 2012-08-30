@@ -17,6 +17,7 @@ my class AST {
 
     method evaluate_unquotes(@unquote_asts) {
         my $pasts := nqp::list();
+        say "The list has {+@unquote_asts} elements";
         for @unquote_asts {
             # TODO: find and report macro name
             X::TypeCheck::Splice.new(
@@ -24,7 +25,16 @@ my class AST {
                 expected => AST,
                 action   => 'unquote evaluation',
             ).throw unless $_ ~~ AST;
-            nqp::push($pasts, nqp::getattr(nqp::p6decont($_), AST, '$!past'))
+            my $past := QAST::Block.new(
+                :blocktype<raw>,
+                nqp::getattr(nqp::p6decont($_), AST, '$!past'),
+            );
+            $*W.add_quasi_fixups($_, $past);
+            $past := QAST::Stmts.new(
+                $past,
+                QAST::Op.new( :op('call'), QAST::BVal.new( :value($past) ) )
+            );
+            nqp::push($pasts, $past);
         }
         $!past.evaluate_unquotes($pasts);
     }

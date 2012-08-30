@@ -1078,8 +1078,19 @@ class Perl6::Actions is HLL::Actions {
     method term:sym<lambda>($/)             { make block_closure($<pblock>.ast); }
     method term:sym<sigterm>($/)            { make $<sigterm>.ast; }
     method term:sym<unquote>($/) {
+        my $ast_class := $*W.find_symbol(['AST']);
+        my $unquote_ast := $ast_class.new();
+        my $past := $<statementlist>.ast;
+        nqp::bindattr($unquote_ast, $ast_class, '$!past', $past);
+        $*W.add_object($unquote_ast);
+        my $throwaway_block := QAST::Block.new();
+        my $unquote_context := block_closure(
+            reference_to_code_object(
+                $*W.create_simple_code_object($throwaway_block, 'Block'),
+                $throwaway_block
+            ));
         make QAST::Unquote.new(:position(+@*UNQUOTE_ASTS));
-        @*UNQUOTE_ASTS.push($<statementlist>.ast);
+        @*UNQUOTE_ASTS.push($unquote_ast);
     }
 
     method name($/) { }
