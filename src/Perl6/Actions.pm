@@ -3549,7 +3549,7 @@ class Perl6::Actions is HLL::Actions {
                         add_macro_arguments($expr, $ast_class, @argument_quasi_asts);
                     }
                 }
-                my &*wrap_and_recontext := sub ($quast_ast) {
+                my &*wrap_and_recontext := sub ($quasi_ast) {
                     my $past := QAST::Block.new(
                         :blocktype<raw>,
                         nqp::getattr($quasi_ast,
@@ -3957,7 +3957,7 @@ class Perl6::Actions is HLL::Actions {
                     add_macro_arguments($_.ast, $ast_class, @argument_quasi_asts);
                 }
 
-                my &*wrap_and_recontext := sub ($quast_ast) {
+                my &*wrap_and_recontext := sub ($quasi_ast) {
                     my $past := QAST::Block.new(
                         :blocktype<raw>,
                         nqp::getattr($quasi_ast,

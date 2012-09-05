@@ -813,9 +813,9 @@ class Perl6::World is HLL::World {
     method add_quasi_fixups($quasi_ast, $block) {
         $quasi_ast := pir::nqp_decontainerize__PP($quasi_ast);
         self.add_object($quasi_ast);
-        unless $quasi_ast.is_quasi_ast {
-            return "";
-        }
+        # unless $quasi_ast.is_quasi_ast {
+        #     return "";
+        # }
         my $fixups := QAST::Op.new(:name<set_outer_ctx>, :op<callmethod>,
            QAST::BVal.new(:value($block)),
            QAST::Op.new(
