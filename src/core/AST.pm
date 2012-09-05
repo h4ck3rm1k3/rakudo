@@ -24,7 +24,8 @@ my class AST {
                 expected => AST,
                 action   => 'unquote evaluation',
             ).throw unless $_ ~~ AST;
-            nqp::push($pasts, nqp::getattr(nqp::p6decont($_), AST, '$!past'))
+            my $past := &*wrap_and_recontext(pir::perl6_decontainerize__PP($_));
+            nqp::push($pasts, $past);
         }
         $!past.evaluate_unquotes($pasts);
     }
