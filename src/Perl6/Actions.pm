@@ -3466,11 +3466,7 @@ class Perl6::Actions is HLL::Actions {
             my $quasi_ast := $ast_class.new();
             $*W.add_object($quasi_ast);
             my $throwaway_block := QAST::Block.new();
-            my $quasi_context := block_closure(
-                reference_to_code_object(
-                    $*W.create_simple_code_object($throwaway_block, 'Block'),
-                    $throwaway_block
-                ));
+            my $quasi_context := $*W.create_simple_code_object($throwaway_block, 'Block');
             nqp::bindattr($quasi_ast, $ast_class, '$!past', $expr);
             nqp::bindattr($quasi_ast, $ast_class, '$!quasi_context', $quasi_context);
             @argument_quasi_asts.push($quasi_ast);
